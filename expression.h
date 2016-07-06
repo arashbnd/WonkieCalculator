@@ -10,21 +10,24 @@ enum operator {
 };
 
 enum expression_type {
-	EXPR_EVAL,
+	EXPR_BINARY,
+	EXPR_UNARY,
 	EXPR_LITERAL,
 };
 
 typedef double number_t;
 
 struct expression {
-	enum expression_type exprtype;
+	enum expression_type type;
 	union {
 		struct {
 			struct expression *lhs, *rhs;
 			enum operator operation;
 		} eval;
+		struct expression *unary;
 		number_t literal;
 	} expr;
+	char *str;
 };
 
 #endif /* _EXPRESSION_H_ */
