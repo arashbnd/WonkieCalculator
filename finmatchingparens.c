@@ -49,7 +49,7 @@ int find_highest_level_parenthisis_body(const char *str, char **out) {
 
 	*out = res;
 
-	return 0;
+	return paren_count;
 }
 
 int main(void) {
@@ -60,7 +60,7 @@ int main(void) {
 	while (getline(&line, &line_len, stdin) >= 0) {
 		line[strlen(line) - 1] = '\0';
 
-		if (find_highest_level_parenthisis_body(line, &parenthisis_body)) {
+		if (find_highest_level_parenthisis_body(line, &parenthisis_body) < 0) {
 			warn("could not find a matching parenthisis group in '%s'", line);
 			continue;
 		}
