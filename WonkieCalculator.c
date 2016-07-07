@@ -6,6 +6,7 @@
 #include "expression.h"
 #include "printer.h"
 #include "simplify.h"
+#include "evaluate.h"
 
 int main(void) {
 	char *line = NULL;
@@ -34,9 +35,9 @@ int main(void) {
 			continue;
 
 		print_expression_tree(expr, stderr);
-
 		
 		printf(NUMBER_T_FMT "\n", eval(expr->nodes[0]));
+
 		expression_free(expr);
 	}
 

@@ -2,8 +2,8 @@
 BINDIR ?= ${CURDIR}
 DEBUG ?=
 
-SRCS = WonkieCalculator.c expression.c printer.c parser.c simplify.c
-HDRS = expression.h printer.h parser.h simplify.h
+SRCS = WonkieCalculator.c expression.c printer.c parser.c simplify.c evaluate.c
+HDRS = expression.h printer.h parser.h simplify.h evaluate.h
 
 all: ${BINDIR}/WonkieCalculator
 
