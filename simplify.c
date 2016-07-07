@@ -8,8 +8,11 @@ static void refresh_expression_node_completeness(struct expression_node *nod) {
 		nod->type == EXPR_LITERAL ||
 		(
 			nod->type == EXPR_OPERATOR &&
-			nod->expr.operator.rhs &&
-			nod->expr.operator.lhs
+			(
+				nod->expr.operator.lhs ||
+				nod->expr.operator.operation == OPER_NEGATE
+			) &&
+			nod->expr.operator.rhs
 		)
 	);
 }
