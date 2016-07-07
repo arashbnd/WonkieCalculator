@@ -35,6 +35,8 @@ int main(void) {
 
 		print_expression_tree(expr, stderr);
 
+		
+		printf(NUMBER_T_FMT "\n", eval(expr->nodes[0]));
 		expression_free(expr);
 	}
 
