@@ -18,25 +18,27 @@ int main(void) {
 		if (parse_expression(line, &expr))
 			continue;
 
-		for (error = 0; expr->n_nodes > 1;) {
+		if (expr->n_nodes > 0) {
+			for (error = 0; expr->n_nodes > 1;) {
+				fprintf(stderr, "-------\n");
+				print_expression_tree(expr, stderr);
+
+				if (simplify_expression(expr, &expr)) {
+					fprintf(stderr, "error simplifying expression'");
+					error = 1;
+					break;
+				}
+			}
 			fprintf(stderr, "-------\n");
+			if (error)
+				continue;
+
 			print_expression_tree(expr, stderr);
+
 			fprintf(stderr, "-------\n");
 			
-			if (simplify_expression(expr, &expr)) {
-				fprintf(stderr, "error simplifying expression '");
-				print_expression(expr, stderr);
-				fprintf(stderr, "'\n");
-				error = 1;
-				break;
-			}
+			printf(NUMBER_T_FMT "\n", eval(expr->nodes[0]));
 		}
-		if (error)
-			continue;
-
-		print_expression_tree(expr, stderr);
-		
-		printf(NUMBER_T_FMT "\n", eval(expr->nodes[0]));
 
 		expression_free(expr);
 	}
