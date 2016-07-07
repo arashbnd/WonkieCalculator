@@ -4,13 +4,14 @@
 #include <string.h>
 
 #include "expression.h"
+#include "printer.h"
 
-void print_expression_node(struct expression_node *nod) {
+void print_expression_node(struct expression_node *nod, FILE *stream) {
 	char opchar;
 
 	switch (nod->type) {
 		case EXPR_LITERAL:
-			printf(NUMBER_T_FMT, nod->expr.literal);
+			fprintf(stream, NUMBER_T_FMT, nod->expr.literal);
 		break;
 		case EXPR_OPERATOR:
 			switch (nod->expr.operator.operation) {
@@ -35,19 +36,43 @@ void print_expression_node(struct expression_node *nod) {
 				break;
 			}
 
-			printf("%c{%d}", opchar, nod->expr.operator.precedence);
+			fprintf(stream, "%c{%d}", opchar, nod->expr.operator.precedence);
 		break;
 	}
 }
 
-void print_expression(struct expression *expr) {
+void print_expression(struct expression *expr, FILE *stream) {
 	size_t i;
 
 	for (i = 0; i < expr->n_nodes; ++i) {
 		if (i > 0)
-			putchar(' ');
-		print_expression_node(expr->nodes[i]);
+			fputc(' ', stream);
+		print_expression_node(expr->nodes[i], stream);
 	}
 
-	printf("\n");
+	fprintf(stream, "\n");
+}
+
+void print_expression_tree(struct expression *expr, FILE *stream) {
+	size_t i;
+
+	for (i = 0; i < expr->n_nodes; ++i)
+		print_expression_node_tree(expr->nodes[i], 0, stream);
+}
+
+void print_expression_node_tree(struct expression_node *nod, unsigned indent_level, FILE *stream) {
+	unsigned i;
+
+	for (i = 0; i < indent_level; ++i)
+		fputc('\t', stream);
+
+	print_expression_node(nod, stream);
+	fputc('\n', stream);
+
+	if (nod->type == EXPR_OPERATOR) {
+		if (nod->expr.operator.lhs)
+			print_expression_node_tree(nod->expr.operator.lhs, indent_level + 1, stream);
+		if (nod->expr.operator.rhs)
+			print_expression_node_tree(nod->expr.operator.rhs, indent_level + 1, stream);
+	}
 }

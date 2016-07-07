@@ -23,6 +23,7 @@ typedef double number_t;
 
 struct expression_node {
 	enum expression_type type;
+	unsigned char complete;
 	union {
 		struct {
 			struct expression_node *lhs, *rhs;

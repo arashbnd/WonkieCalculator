@@ -5,17 +5,35 @@
 
 #include "expression.h"
 #include "printer.h"
+#include "simplify.h"
 
 int main(void) {
 	char *line = NULL;
 	size_t line_len = 0;
 	struct expression *expr;
+	int error;
 
 	while (getline(&line, &line_len, stdin) >= 0) {
 		if (parse_expression(line, &expr))
 			continue;
 
-		print_expression(expr);
+		for (error = 0; expr->n_nodes > 1;) {
+			fprintf(stderr, "-------\n");
+			print_expression_tree(expr, stderr);
+			fprintf(stderr, "-------\n");
+			
+			if (simplify_expression(expr, &expr)) {
+				fprintf(stderr, "error simplifying expression '");
+				print_expression(expr, stderr);
+				fprintf(stderr, "'\n");
+				error = 1;
+				break;
+			}
+		}
+		if (error)
+			continue;
+
+		print_expression_tree(expr, stderr);
 
 		expression_free(expr);
 	}
