@@ -3,21 +3,22 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include <errno.h> // [TODO] [FIXME] we can't use this in the final draft
 
 #include "expression.h"
 
 int parse_number(const char *str, number_t *res) {
-	number_t s;
+	number_t s, abs_s;
 	char *endp;
 
-	errno = 0;
 	s = strtod(str, &endp);
 
-	if (endp == str)
-		errno = EINVAL;
-
-	if (errno)
+	abs_s = fabs(s);
+	if (
+		endp == str ||
+		abs_s == INFINITY ||
+		abs_s == NAN ||
+		abs_s == HUGE_VAL
+	)
 		return -1;
 
 	*res = s;
