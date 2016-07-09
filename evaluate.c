@@ -1,5 +1,6 @@
 
 #include <stdio.h> // for size_t
+#include <math.h>
 
 #include "expression.h"
 
@@ -22,6 +23,11 @@ number_t eval(struct expression_node *node){
 
          case OPER_NEGATE:
          return -eval(node->expr.operator.rhs);
+
+         case OPER_NULL:
+         case OPER_MAX:
+         default:
+         return NAN;
       }
    }
 }

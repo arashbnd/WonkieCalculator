@@ -6,6 +6,10 @@
 
 #include "expression.h"
 
+// ugly hack to let us use isspace(3) and isdigit(3) [TODO]
+extern int isspace(int c);
+extern int isdigit(int c);
+
 int parse_number(const char *str, number_t *res) {
 	number_t s, abs_s;
 	char *endp;

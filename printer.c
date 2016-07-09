@@ -38,6 +38,9 @@ void print_expression_node(struct expression_node *nod, FILE *stream) {
 
 			fprintf(stream, "%c{%d}", opchar, nod->expr.operator.precedence);
 		break;
+		case EXPR_NONE:
+			fprintf(stream, "<none>");
+		break;
 	}
 }
 

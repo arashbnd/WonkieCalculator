@@ -1,3 +1,6 @@
+
+#define _DEFAULT_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -7,6 +10,7 @@
 #include "printer.h"
 #include "simplify.h"
 #include "evaluate.h"
+#include "parser.h"
 
 int main(void) {
 	char *line = NULL;
