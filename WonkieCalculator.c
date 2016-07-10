@@ -59,6 +59,8 @@ void print_expression(struct expression *expr, FILE *stream);
 void print_expression_tree(struct expression *expr, FILE *stream);
 void print_expression_node_tree(struct expression_node *nod, unsigned indent_level, FILE *stream);
 int simplify_expression(struct expression *expr, struct expression **out);
+// because microsoft can't be bothered to implement this one
+ssize_t custom_getline(char **lineptr, size_t *n, FILE *stream);
 
 number_t eval(struct expression_node *node){
    if(node->type == EXPR_LITERAL)
@@ -86,6 +88,40 @@ number_t eval(struct expression_node *node){
          return NAN;
       }
    }
+}
+
+#define custom_getline_block_size 128
+ssize_t custom_getline(char **lineptr, size_t *n, FILE *stream) {
+	size_t alloc_size, i;
+	ssize_t ret = -1;
+	int c, read_delim = 0;
+	char *tmp;
+	
+	i = 0;
+	do {
+		if (!read_delim)
+			c = fgetc(stream);
+
+		alloc_size = ((i / custom_getline_block_size) + 1) * custom_getline_block_size;
+
+		if (! (tmp = realloc(*lineptr, alloc_size)))
+			return -1;
+		*lineptr = tmp;
+		*n = alloc_size;
+
+		if (read_delim || c == EOF) {
+			c = EOF;
+			(*lineptr)[i] = '\0';
+		} else
+			(*lineptr)[i++] = (char) c;
+
+		read_delim = (read_delim || c == '\n');
+	} while (c != EOF);
+
+	if (i > 0)
+		ret = i;
+
+	return ret;
 }
 
 struct expression *expression_allocate(void) {
@@ -442,7 +478,7 @@ int main(void) {
 	struct expression *expr;
 	int error;
 
-	while (getline(&line, &line_len, stdin) >= 0) {
+	while (custom_getline(&line, &line_len, stdin) >= 0) {
 		if (parse_expression(line, &expr))
 			continue;
 
@@ -470,6 +506,8 @@ int main(void) {
 
 		expression_free(expr);
 	}
+	if (line)
+		free(line);
 
 	return feof(stdin);
 }
